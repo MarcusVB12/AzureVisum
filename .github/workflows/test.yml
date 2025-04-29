@@ -6,8 +6,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    using: 'node20'
-    main: 'index.js'
     steps:
       - name: Checkout
         uses: actions/checkout@v4     
@@ -18,3 +16,5 @@ jobs:
           npm i xml-js --legacy-peer-deps
           npm i minimist --legacy-peer-deps
           npm i html-to-json-parser --legacy-peer-deps
+      - name: chamando o js
+        uses: AzureVisum/action@v0.1
