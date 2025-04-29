@@ -8,9 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-      - name: Hello world action step
-        uses: ./ # Uses an action in the root directory
+        uses: actions/checkout@v4     
       - name: 4. CACHE (WE CAN USE RESTORE/SAVE ALSO)
         uses: actions/cache@v3
         id: cache-npm
@@ -33,3 +31,5 @@ jobs:
             # /usr/bin/jq
           key: sf-pipe-cli-dy
           restore-keys: sf-pipe-cli-dy
+      - name: Hello world action step
+        uses: ./ # Uses an action in the root directory
