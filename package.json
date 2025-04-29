@@ -1,0 +1,26 @@
+{
+  "dependencies": {
+    "@actions/core": "^1.11.1",
+    "@actions/github": "^6.0.0",
+    "@vercel/ncc": "^0.38.3",
+    "powershell": "^2.3.3"
+  },
+  "name": "azurevisum",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.3"
+  },
+  "description": "azurevisum",
+  "scripts": {
+    "build":"ncc build src/action.js -o dist",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MarcusVB12/AzureVisum.git"
+  },
+  "author": "Marcus Vinicius"
+}
