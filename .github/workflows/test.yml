@@ -17,4 +17,4 @@ jobs:
           npm i minimist --legacy-peer-deps
           npm i html-to-json-parser --legacy-peer-deps
       - name: chamando o js
-        uses: github/workflows/action.yml@main
+        uses: https://github.com/MarcusVB12/AzureVisum/blob/main/.github/workflows/action.yml@main
