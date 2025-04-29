@@ -1,7 +1,0 @@
-name: 'Azure Visum'
-descriprion: 'deletar a s branchs abertas com task em done'
-author: 'Marcus Vinicius'
-
-runs:
-  using: 'node20'
-  main: 'dist/index.js'
