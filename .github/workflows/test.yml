@@ -38,5 +38,6 @@ jobs:
           npm i xml-js --legacy-peer-deps
           npm i minimist --legacy-peer-deps
           npm i html-to-json-parser --legacy-peer-deps
-      - name: Hello world action step
-        uses: ./ # Uses an action in the root directory
+
+      - using: 'node20'
+        main: 'index.js'
