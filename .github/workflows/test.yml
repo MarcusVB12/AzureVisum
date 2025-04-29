@@ -9,27 +9,34 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4     
-      - name: 4. CACHE (WE CAN USE RESTORE/SAVE ALSO)
-        uses: actions/cache@v3
-        id: cache-npm
-        env:
-          cache-name: node_modules_cache
-        with:
-          path: |
-            ~/.npm
-            node_modules
-            sfdx
-            ${{ env.NPM_PREFIX }}/bin
-            ${{ env.NPM_PREFIX }}/lib/node_modules/@salesforce/cli
-            /usr/local/bin/sf
-            /usr/local/bin/sfdx
-            /usr/local/lib/node_modules/@salesforce
-            /home/runner/.local/bin/yq
-            /home/runner/.local/bin/xq
-            /home/runner/.local/share/sf
-            /home/runner/.local/share/sfdx
-            # /usr/bin/jq
-          key: sf-pipe-cli-dy
-          restore-keys: sf-pipe-cli-dy
+      # - name: 4. CACHE (WE CAN USE RESTORE/SAVE ALSO)
+      #   uses: actions/cache@v3
+      #   id: cache-npm
+      #   env:
+      #     cache-name: node_modules_cache
+      #   with:
+      #     path: |
+      #       ~/.npm
+      #       node_modules
+      #       sfdx
+      #       ${{ env.NPM_PREFIX }}/bin
+      #       ${{ env.NPM_PREFIX }}/lib/node_modules/@salesforce/cli
+      #       /usr/local/bin/sf
+      #       /usr/local/bin/sfdx
+      #       /usr/local/lib/node_modules/@salesforce
+      #       /home/runner/.local/bin/yq
+      #       /home/runner/.local/bin/xq
+      #       /home/runner/.local/share/sf
+      #       /home/runner/.local/share/sfdx
+      #       # /usr/bin/jq
+      #     key: sf-pipe-cli-dy
+      #     restore-keys: sf-pipe-cli-dy
+      - name: 5. Install Resolution Automation Dependencies
+        run: |
+          node --version
+          npm i dotenv --legacy-peer-deps
+          npm i xml-js --legacy-peer-deps
+          npm i minimist --legacy-peer-deps
+          npm i html-to-json-parser --legacy-peer-deps
       - name: Hello world action step
         uses: ./ # Uses an action in the root directory
