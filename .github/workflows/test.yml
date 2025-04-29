@@ -3,21 +3,18 @@ name: Test
 on:
   pull_request:    
     types: [reopened]
-runs:
-  using: 'node20'
-  main: 'index.js'
-# jobs:
-#   test:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Checkout
-#         uses: actions/checkout@v4     
-#       - name: 5. Install Resolution Automation Dependencies
-#         run: |
-#           node --version
-#           npm i dotenv --legacy-peer-deps
-#           npm i xml-js --legacy-peer-deps
-#           npm i minimist --legacy-peer-deps
-#           npm i html-to-json-parser --legacy-peer-deps
-#       - using: 'node20'
-#         main: 'index.js'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    using: 'node20'
+    main: 'index.js'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4     
+      - name: 5. Install Resolution Automation Dependencies
+        run: |
+          node --version
+          npm i dotenv --legacy-peer-deps
+          npm i xml-js --legacy-peer-deps
+          npm i minimist --legacy-peer-deps
+          npm i html-to-json-parser --legacy-peer-deps
