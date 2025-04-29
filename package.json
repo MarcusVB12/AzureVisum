@@ -3,7 +3,11 @@
     "@actions/core": "^1.11.1",
     "@actions/github": "^6.0.0",
     "@vercel/ncc": "^0.38.3",
-    "powershell": "^2.3.3"
+    "powershell": "^2.3.3",
+    "dotenv": "^16.4.7",
+    "html-to-json-parser": "^2.0.1",
+    "minimist": "^1.2.8",
+    "xml-js": "^1.6.11"
   },
   "name": "azurevisum",
   "version": "1.0.0",
