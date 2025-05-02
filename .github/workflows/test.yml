@@ -15,6 +15,13 @@ jobs:
         with:
           node-version: '>=20'
           check-latest: true
+      - name: 5. Install Resolution Automation Dependencies
+        run: |
+          node --version
+          npm i dotenv --legacy-peer-deps
+          npm i xml-js --legacy-peer-deps
+          npm i minimist --legacy-peer-deps
+          npm i html-to-json-parser --legacy-peer-deps
     # 6. GET SCRIPT FILE
       - name: 6. GET SCRIPT FILE
         run: |
