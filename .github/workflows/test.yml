@@ -42,12 +42,27 @@ jobs:
       #     echo $(node src/action.js)
       - name: Get Merged Branches
         run: |
-          git branch --merged origin/main | grep -v "main" | while read branch; do
+          git fetch --all
+          touch merged_branches_list.txt  # Garante que o arquivo exista
+
+          # Primeiro, verificar se a branch principal existe
+          if git show-ref --verify --quiet refs/heads/main; then
+            MAIN_BRANCH="main"
+          elif git show-ref --verify --quiet refs/heads/master; then
+            MAIN_BRANCH="master"
+          else
+            echo "Erro: Nenhuma branch principal encontrada!" && exit 1
+          fi
+
+          # Lista todas as branches mergeadas corretamente
+          git branch --merged $MAIN_BRANCH | grep -v "$MAIN_BRANCH" | while read branch; do
             if [ -n "$branch" ]; then
               echo "$branch - $(git log -1 --pretty=format:'%an' $branch)" >> merged_branches_list.txt
             fi
           done
-          cat merged_branches_list.txt
+
+          cat merged_branches_list.txt  # Exibe a lista no console
+
 
       - name: Upload Merged Branches List
         uses: actions/upload-artifact@v4
