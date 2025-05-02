@@ -42,32 +42,33 @@ jobs:
       #     echo $(node src/action.js)
       - name: Get Merged Branches
         run: |
-          git fetch --unshallow || true  # Garante que o repositório tenha histórico completo
-          git fetch --prune              # Atualiza todas as referências remotas
+          git fetch --unshallow || git fetch --depth=10000  # Garante histórico completo
+          git fetch --prune  # Atualiza todas as referências remotas
 
           touch merged_branches_list.txt  # Garante que o arquivo exista
 
-          # Verificar qual é a branch principal corretamente
+          # Verifica a branch principal corretamente
           if git ls-remote --exit-code origin main; then
-            MAIN_BRANCH="origin/main"
+            MAIN_BRANCH="main"
           elif git ls-remote --exit-code origin master; then
-            MAIN_BRANCH="origin/master"
+            MAIN_BRANCH="master"
           else
             echo "Erro: Nenhuma branch principal encontrada no remoto!" && exit 1
           fi
 
           # Checkout na branch principal
-          git checkout --track $MAIN_BRANCH || git checkout -b main $MAIN_BRANCH
+          git checkout $MAIN_BRANCH || git checkout -b $MAIN_BRANCH origin/$MAIN_BRANCH
           git pull --all
 
-          # Lista todas as branches mergeadas corretamente
-          git branch --merged main | grep -v "main" | while read branch; do
+          # Verifica se realmente há branches mergeadas antes de salvar no arquivo
+          git branch --merged $MAIN_BRANCH | grep -v "$MAIN_BRANCH" | while read branch; do
             if [ -n "$branch" ]; then
               echo "$branch - $(git log -1 --pretty=format:'%an' $branch)" >> merged_branches_list.txt
             fi
           done
 
-          cat merged_branches_list.txt  # Exibe a lista no console
+          # Exibe a lista para depuração
+          cat merged_branches_list.txt
 
 
       - name: Upload Merged Branches List
