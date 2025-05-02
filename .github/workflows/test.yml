@@ -40,12 +40,14 @@ jobs:
       # - name: 7. UPDATE DEVOPS RESOLUTION (${{ github.head_ref }})
       #   run: |
       #     echo $(node src/action.js)
-      - name: Get Merged Branches
+            - name: Get Merged Branches
         run: |
-          git fetch --all
+          git fetch --unshallow || true  # Garante que o repositório tenha histórico completo
+          git fetch --prune              # Atualiza todas as referências remotas
+
           touch merged_branches_list.txt  # Garante que o arquivo exista
 
-          # Verificar qual é a branch principal no remoto
+          # Verificar qual é a branch principal corretamente
           if git ls-remote --exit-code origin main; then
             MAIN_BRANCH="origin/main"
           elif git ls-remote --exit-code origin master; then
@@ -54,10 +56,8 @@ jobs:
             echo "Erro: Nenhuma branch principal encontrada no remoto!" && exit 1
           fi
 
-          # Checkout na branch principal para garantir que ela esteja disponível localmente
+          # Checkout na branch principal
           git checkout --track $MAIN_BRANCH || git checkout -b main $MAIN_BRANCH
-
-          # Atualizar novamente para garantir que temos todas as informações corretas
           git pull --all
 
           # Lista todas as branches mergeadas corretamente
