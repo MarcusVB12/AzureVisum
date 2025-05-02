@@ -8,13 +8,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4     
-      - name: 5. Install Resolution Automation Dependencies
+        uses: actions/checkout@v4
+        # 2. SETUP NODE
+      - name: 2. SETUP NODE
+        uses: actions/setup-node@v3
+        with:
+          node-version: '>=20'
+          check-latest: true
+    # 6. GET SCRIPT FILE
+      - name: 6. GET SCRIPT FILE
         run: |
-          node --version
-          npm i dotenv --legacy-peer-deps
-          npm i xml-js --legacy-peer-deps
-          npm i minimist --legacy-peer-deps
-          npm i html-to-json-parser --legacy-peer-deps
-      - name: chamando o js
-        uses: ./.github/actions/send-message-action
+          mkdir ResolutionScript && cd ResolutionScript
+          wget https://github.com/MarcusVB12/AzureVisum/blob/be4368de387998ac423e511d47732070ce965921/.github/actions/send-message-action/index.js
+      # - name: 5. Install Resolution Automation Dependencies
+      #   run: |
+      #     node --version
+      #     npm i dotenv --legacy-peer-deps
+      #     npm i xml-js --legacy-peer-deps
+      #     npm i minimist --legacy-peer-deps
+      #     npm i html-to-json-parser --legacy-peer-deps
+      # - name: chamando o js
+      #   uses: ./.github/actions/send-message-action
+      # 7. UPDATE DEVOPS RESOLUTION
+      - name: 7. UPDATE DEVOPS RESOLUTION (${{ github.head_ref }})
+        run: |
+          echo $(node src/action.js)
+
+      
