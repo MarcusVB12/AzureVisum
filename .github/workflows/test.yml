@@ -44,7 +44,6 @@ jobs:
       - name: Get Merged Branches
         run: |
           # Garantir que todo o histórico seja baixado
-          # Garantir que todo o histórico seja baixado
           git fetch --prune --unshallow || git fetch --prune --depth=10000
           git fetch --all
 
@@ -92,17 +91,6 @@ jobs:
           else
               echo "⚠️ Nenhuma branch mergeada encontrada ou arquivo está vazio!"
               exit 1
-          fi
-
-
-      - name: Debug Merged Branches List
-        run: |
-          if [ -s merged_not_deleted_branches.txt ]; then
-            echo "✅ Arquivo gerado corretamente:"
-            cat merged_not_deleted_branches.txt
-          else
-            echo "⚠️ ERRO: O arquivo está vazio ou não existe!"
-            exit 1
           fi
 
       - name: Upload Merged Branches List
