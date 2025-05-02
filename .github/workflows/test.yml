@@ -41,15 +41,14 @@ jobs:
       # - name: 7. UPDATE DEVOPS RESOLUTION (${{ github.head_ref }})
       #   run: |
       #     echo $(node src/action.js)
-      - name: Get Merged Branches
+      - name: Get Merged and Not Deleted Branches
         run: |
           git fetch --unshallow || git fetch --depth=10000
           git fetch --prune
-          git fetch --all
 
           touch merged_not_deleted_branches.txt
 
-          # Verificar branch principal corretamente
+          # Verifica a branch principal correta
           if git ls-remote --exit-code origin main; then
             MAIN_BRANCH="main"
           elif git ls-remote --exit-code origin master; then
@@ -58,29 +57,24 @@ jobs:
             echo "Erro: Nenhuma branch principal encontrada!" && exit 1
           fi
 
-          # Checkout correto da branch
+          # Checkout na branch principal
           git checkout $MAIN_BRANCH || git checkout -b $MAIN_BRANCH origin/$MAIN_BRANCH
           git pull --all
 
-          # Debug para verificar branches disponíveis
-          echo "🔎 Verificando branches disponíveis..."
-          git branch -a
-
-          # Debug para verificar histórico de merges
-          echo "🔎 Histórico de merges explícitos..."
-          git log --oneline --merges
-
-          # Lista todas as branches mergeadas corretamente
-          git branch --merged main | grep -v "main" | while read branch; do
+          # Para cada branch mergeada, verificar se ainda existe no remoto
+          git branch --merged $MAIN_BRANCH | grep -v "$MAIN_BRANCH" | while read branch; do
+            echo "🔎 Testando branch: $branch"
             if git ls-remote --exit-code origin "$branch"; then
               AUTHOR=$(git log -1 --pretty=format:'%an' -- "$branch" 2>/dev/null || echo "Autor desconhecido")
               echo "$branch - $AUTHOR" >> merged_not_deleted_branches.txt
+            else
+              echo "⚠️ Branch não encontrada no remoto: $branch"
             fi
           done
 
-          # Depuração antes do upload
+          # Exibir conteúdo do arquivo para depuração
           echo "✅ Conteúdo do arquivo:"
-          cat merged_not_deleted_branches.txt || echo "⚠️ Nenhuma branch mergeada encontrada!"
+          cat merged_not_deleted_branches.txt || echo "⚠️ Nenhuma branch encontrada!"
 
 
       - name: Debug Merged Branches List
