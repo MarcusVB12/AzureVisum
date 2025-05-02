@@ -45,6 +45,7 @@ jobs:
         run: |
           git fetch --unshallow || git fetch --depth=10000
           git fetch --prune
+          git fetch --all
 
           touch merged_branches_list.txt
 
@@ -70,7 +71,7 @@ jobs:
           git log --oneline --merges
 
           # Lista todas as branches mergeadas corretamente
-          git branch --merged main | grep -v "main" | while read branch; do
+          git branch --merged origin/main | grep -v "origin/main" | while read branch; do
             if git ls-remote --exit-code origin $branch; then
               echo "$branch - $(git log -1 --pretty=format:'%an' $branch)" >> merged_not_deleted_branches.txt
             fi
