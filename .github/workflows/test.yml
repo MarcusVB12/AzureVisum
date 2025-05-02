@@ -45,17 +45,23 @@ jobs:
           git fetch --all
           touch merged_branches_list.txt  # Garante que o arquivo exista
 
-          # Primeiro, verificar se a branch principal existe
+          # Verificar qual é a branch principal no remoto
           if git ls-remote --exit-code origin main; then
-            MAIN_BRANCH="main"
+            MAIN_BRANCH="origin/main"
           elif git ls-remote --exit-code origin master; then
-            MAIN_BRANCH="master"
+            MAIN_BRANCH="origin/master"
           else
             echo "Erro: Nenhuma branch principal encontrada no remoto!" && exit 1
           fi
 
+          # Checkout na branch principal para garantir que ela esteja disponível localmente
+          git checkout --track $MAIN_BRANCH || git checkout -b main $MAIN_BRANCH
+
+          # Atualizar novamente para garantir que temos todas as informações corretas
+          git pull --all
+
           # Lista todas as branches mergeadas corretamente
-          git branch --merged $MAIN_BRANCH | grep -v "$MAIN_BRANCH" | while read branch; do
+          git branch --merged main | grep -v "main" | while read branch; do
             if [ -n "$branch" ]; then
               echo "$branch - $(git log -1 --pretty=format:'%an' $branch)" >> merged_branches_list.txt
             fi
