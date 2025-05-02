@@ -40,9 +40,6 @@ jobs:
       # - name: 7. UPDATE DEVOPS RESOLUTION (${{ github.head_ref }})
       #   run: |
       #     echo $(node src/action.js)
-      - name: Checkout Repository
-            uses: actions/checkout@v3
-
       - name: Get Merged Branches
         run: |
           git fetch --all
