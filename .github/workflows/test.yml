@@ -78,14 +78,14 @@ jobs:
 
           # Depuração antes do upload
           echo "✅ Conteúdo do arquivo:"
-          cat merged_branches_list.txt || echo "⚠️ Nenhuma branch mergeada encontrada!"
+          cat merged_not_deleted_branches.txt || echo "⚠️ Nenhuma branch mergeada encontrada!"
 
 
       - name: Debug Merged Branches List
         run: |
-          if [ -s merged_branches_list.txt ]; then
+          if [ -s merged_not_deleted_branches.txt ]; then
             echo "✅ Arquivo gerado corretamente:"
-            cat merged_branches_list.txt
+            cat merged_not_deleted_branches.txt
           else
             echo "⚠️ ERRO: O arquivo está vazio ou não existe!"
             exit 1
@@ -94,8 +94,8 @@ jobs:
       - name: Upload Merged Branches List
         uses: actions/upload-artifact@v4
         with:
-          name: merged-branches-list
-          path: merged_branches_list.txt
+          name: merged_not_deleted_branches
+          path: merged_not_deleted_branches.txt
 
 
 
