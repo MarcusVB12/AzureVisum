@@ -71,6 +71,16 @@ jobs:
           cat merged_branches_list.txt
 
 
+            - name: Debug Merged Branches List
+        run: |
+          if [ -s merged_branches_list.txt ]; then
+            echo "✅ Arquivo gerado corretamente:"
+            cat merged_branches_list.txt
+          else
+            echo "⚠️ ERRO: O arquivo está vazio ou não existe!"
+            exit 1
+          fi
+
       - name: Upload Merged Branches List
         uses: actions/upload-artifact@v4
         with:
