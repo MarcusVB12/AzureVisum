@@ -71,9 +71,10 @@ jobs:
           git log --oneline --merges
 
           # Lista todas as branches mergeadas corretamente
-          git branch --merged origin/$MAIN_BRANCH | grep -v "origin/$MAIN_BRANCH" | while read branch; do
-            if git ls-remote --exit-code origin $branch; then
-              echo "$branch - $(git log -1 --pretty=format:'%an' $branch)" >> merged_not_deleted_branches.txt
+          git branch --merged main | grep -v "main" | while read branch; do
+            if git ls-remote --exit-code origin "$branch"; then
+              AUTHOR=$(git log -1 --pretty=format:'%an' -- "$branch" 2>/dev/null || echo "Autor desconhecido")
+              echo "$branch - $AUTHOR" >> merged_not_deleted_branches.txt
             fi
           done
 
