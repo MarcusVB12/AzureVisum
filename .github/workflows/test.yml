@@ -40,7 +40,7 @@ jobs:
       # - name: 7. UPDATE DEVOPS RESOLUTION (${{ github.head_ref }})
       #   run: |
       #     echo $(node src/action.js)
-            - name: Get Merged Branches
+      - name: Get Merged Branches
         run: |
           git fetch --unshallow || true  # Garante que o repositório tenha histórico completo
           git fetch --prune              # Atualiza todas as referências remotas
