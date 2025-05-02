@@ -42,27 +42,31 @@ jobs:
       #     echo $(node src/action.js)
       - name: Get Merged Branches
         run: |
-          git fetch --unshallow || git fetch --depth=10000  # Garante histórico completo
-          git fetch --prune  # Atualiza todas as referências remotas
+          git fetch --unshallow || git fetch --depth=10000
+          git fetch --prune
 
-          touch merged_branches_list.txt  # Garante que o arquivo exista
+          touch merged_branches_list.txt
 
-          # Verificar qual é a branch principal corretamente
+          # Verificar branch principal corretamente
           if git ls-remote --exit-code origin main; then
             MAIN_BRANCH="main"
           elif git ls-remote --exit-code origin master; then
             MAIN_BRANCH="master"
           else
-            echo "Erro: Nenhuma branch principal encontrada no remoto!" && exit 1
+            echo "Erro: Nenhuma branch principal encontrada!" && exit 1
           fi
 
-          # Checkout correto da branch principal
+          # Checkout correto da branch
           git checkout $MAIN_BRANCH || git checkout -b $MAIN_BRANCH origin/$MAIN_BRANCH
           git pull --all
 
-          # Depuração para listar branches antes de salvá-las
-          echo "🔎 Verificando branches mergeadas..."
-          git branch --merged $MAIN_BRANCH
+          # Debug para verificar branches disponíveis
+          echo "🔎 Verificando branches disponíveis..."
+          git branch -a
+
+          # Debug para verificar histórico de merges
+          echo "🔎 Histórico de merges explícitos..."
+          git log --oneline --merges
 
           # Lista todas as branches mergeadas corretamente
           git branch --merged $MAIN_BRANCH | grep -v "$MAIN_BRANCH" | while read branch; do
@@ -71,7 +75,7 @@ jobs:
             fi
           done
 
-          # Exibe a lista para depuração
+          # Depuração antes do upload
           echo "✅ Conteúdo do arquivo:"
           cat merged_branches_list.txt || echo "⚠️ Nenhuma branch mergeada encontrada!"
 
