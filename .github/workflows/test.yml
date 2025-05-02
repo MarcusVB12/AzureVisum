@@ -44,6 +44,7 @@ jobs:
       - name: Get Merged Branches
         run: |
           # Garantir que todo o histórico seja baixado
+          # Garantir que todo o histórico seja baixado
           git fetch --prune --unshallow || git fetch --prune --depth=10000
           git fetch --all
 
@@ -60,11 +61,7 @@ jobs:
           fi
 
           # Checkout correto da branch principal
-          if git rev-parse --verify $MAIN_BRANCH > /dev/null 2>&1; then
-              git checkout $MAIN_BRANCH
-          else
-              git checkout -b $MAIN_BRANCH origin/$MAIN_BRANCH
-          fi
+          git checkout $MAIN_BRANCH || git checkout -b $MAIN_BRANCH origin/$MAIN_BRANCH
 
           # Atualizar repositório
           git pull --all
@@ -79,11 +76,12 @@ jobs:
 
           # Listar todas as branches que foram mergeadas na branch principal
           git branch -r --merged origin/$MAIN_BRANCH | grep -v origin/$MAIN_BRANCH | sed 's/remotes\/origin\///g' | while read branch; do
-              echo "Verificando branch: $branch"
-              if git ls-remote --exit-code origin $branch > /dev/null; then
-                  echo "$branch - $(git log -1 --pretty=format:'%an' origin/$branch)" >> merged_not_deleted_branches.txt
+              branch_without_origin=$(echo $branch | sed 's|^origin/||')
+              echo "Verificando branch: $branch_without_origin"
+              if git ls-remote --exit-code origin $branch_without_origin > /dev/null; then
+                  echo "$branch_without_origin - $(git log -1 --pretty=format:'%an' origin/$branch_without_origin)" >> merged_not_deleted_branches.txt
               else
-                  echo "⚠️ Branch $branch não encontrada no remoto."
+                  echo "⚠️ Branch $branch_without_origin não encontrada no remoto."
               fi
           done
 
@@ -95,10 +93,6 @@ jobs:
               echo "⚠️ Nenhuma branch mergeada encontrada ou arquivo está vazio!"
               exit 1
           fi
-
-          # Depuração antes do upload
-          echo "✅ Conteúdo do arquivo:"
-          cat merged_not_deleted_branches.txt || echo "⚠️ Nenhuma branch mergeada encontrada!"
 
 
       - name: Debug Merged Branches List
