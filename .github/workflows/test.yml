@@ -47,7 +47,7 @@ jobs:
 
           touch merged_branches_list.txt  # Garante que o arquivo exista
 
-          # Verifica a branch principal corretamente
+          # Verificar qual é a branch principal corretamente
           if git ls-remote --exit-code origin main; then
             MAIN_BRANCH="main"
           elif git ls-remote --exit-code origin master; then
@@ -56,11 +56,15 @@ jobs:
             echo "Erro: Nenhuma branch principal encontrada no remoto!" && exit 1
           fi
 
-          # Checkout na branch principal
+          # Checkout correto da branch principal
           git checkout $MAIN_BRANCH || git checkout -b $MAIN_BRANCH origin/$MAIN_BRANCH
           git pull --all
 
-          # Verifica se realmente há branches mergeadas antes de salvar no arquivo
+          # Depuração para listar branches antes de salvá-las
+          echo "🔎 Verificando branches mergeadas..."
+          git branch --merged $MAIN_BRANCH
+
+          # Lista todas as branches mergeadas corretamente
           git branch --merged $MAIN_BRANCH | grep -v "$MAIN_BRANCH" | while read branch; do
             if [ -n "$branch" ]; then
               echo "$branch - $(git log -1 --pretty=format:'%an' $branch)" >> merged_branches_list.txt
@@ -68,7 +72,8 @@ jobs:
           done
 
           # Exibe a lista para depuração
-          cat merged_branches_list.txt
+          echo "✅ Conteúdo do arquivo:"
+          cat merged_branches_list.txt || echo "⚠️ Nenhuma branch mergeada encontrada!"
 
 
       - name: Debug Merged Branches List
