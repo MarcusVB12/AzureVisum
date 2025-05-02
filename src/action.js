@@ -69,26 +69,20 @@ function workItemWrapper(workItems) {
         state: workItem.fields['System.State']
     }))
 }
-function veryBranchs(workItems, branchsNumber){
-    //verificar branchs com merge baseado na sprint
-    //remover qualquer caracter que não seja numero
-    //verificar se a branch como merge bate com o items do azure 
-    //montar uma lista com as branchs em aberta
-    //retorna para o adam
-    //montar o envio para galera
-    
-    const workItemsToVerifyGit = wrappedWorkItems.filter((workItem) => STATE_TO_VERIFY.includes(workItem.state)) // filtrando lista por done
+function veryBranchs(wrappedWorkItems, branchsNumber){
+    const workItemId = branchsNumber.toString().replace(/[^0-9]/g, '')
 
+    const workItemsToVerifyGit = wrappedWorkItems.filter((workItem) => (STATE_TO_VERIFY.includes(workItem.state) && workItemId.includes(workItem.id.toString().replace(/[^0-9]/g, '')))) // filtrando lista por done
+
+    console.log(workItemsToVerifyGit)
 }
 
 async function init() {
     //pegar a lista de branchs com status merges de prrod
-
     const currentSprintId = (await getSprint())?.value?.[0]?.id
     const workItemsOfCurrentSprint = (await getWorkItemsWithSprint(currentSprintId))?.workItemRelations.map((workItem) => workItem.target.id)
     const workItemsContentOfCurrentSprint = (await getWorkItemsWithIdList(workItemsOfCurrentSprint, ['System.WorkItemType', 'System.State']))?.value
-    veryBranchs(workItemWrapper(workItemsContentOfCurrentSprint));
-    //console.log(wrappedWorkItems)
-    //console.log(workItemsToVerifyGit)
+    veryBranchs(workItemWrapper(workItemsContentOfCurrentSprint),'Fixed AB#I-1');    
 }
+
 init()
