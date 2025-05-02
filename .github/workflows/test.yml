@@ -43,42 +43,58 @@ jobs:
       #     echo $(node src/action.js)
       - name: Get Merged Branches
         run: |
-          git fetch --unshallow || git fetch --depth=10000
-          git fetch --prune
+          # Garantir que todo o histórico seja baixado
+          git fetch --prune --unshallow || git fetch --prune --depth=10000
           git fetch --all
 
+          # Criar arquivo para armazenar branches mergeadas
           touch merged_not_deleted_branches.txt
 
           # Verificar branch principal corretamente
-          if git ls-remote --exit-code origin main; then
-            MAIN_BRANCH="main"
-          elif git ls-remote --exit-code origin master; then
-            MAIN_BRANCH="master"
+          if git ls-remote --exit-code origin main > /dev/null; then
+              MAIN_BRANCH="main"
+          elif git ls-remote --exit-code origin master > /dev/null; then
+              MAIN_BRANCH="master"
           else
-            echo "Erro: Nenhuma branch principal encontrada!" && exit 1
+              echo "Erro: Nenhuma branch principal encontrada!" && exit 1
           fi
 
-          # Checkout correto da branch
-          git checkout $MAIN_BRANCH || git checkout -b $MAIN_BRANCH origin/$MAIN_BRANCH
+          # Checkout correto da branch principal
+          if git rev-parse --verify $MAIN_BRANCH > /dev/null 2>&1; then
+              git checkout $MAIN_BRANCH
+          else
+              git checkout -b $MAIN_BRANCH origin/$MAIN_BRANCH
+          fi
+
+          # Atualizar repositório
           git pull --all
 
           # Debug para verificar branches disponíveis
           echo "🔎 Verificando branches disponíveis..."
-          git branch -a
+          git branch -r
 
           # Debug para verificar histórico de merges
           echo "🔎 Histórico de merges explícitos..."
           git log --oneline --merges
 
-          # Lista todas as branches mergeadas corretamente
-          git branch --merged origin/$MAIN_BRANCH | grep -v origin/$MAIN_BRANCH | sed 's/remotes\/origin\///g' | while read branch; do
+          # Listar todas as branches que foram mergeadas na branch principal
+          git branch -r --merged origin/$MAIN_BRANCH | grep -v origin/$MAIN_BRANCH | sed 's/remotes\/origin\///g' | while read branch; do
               echo "Verificando branch: $branch"
-              if git ls-remote --exit-code origin $branch; then
-                  echo "$branch - $(git log -1 --pretty=format:'%an' $branch)" >> merged_not_deleted_branches.txt
+              if git ls-remote --exit-code origin $branch > /dev/null; then
+                  echo "$branch - $(git log -1 --pretty=format:'%an' origin/$branch)" >> merged_not_deleted_branches.txt
               else
-                  echo "Branch $branch não encontrada no remoto."
+                  echo "⚠️ Branch $branch não encontrada no remoto."
               fi
           done
+
+          # Depuração para verificar se o arquivo foi gerado corretamente
+          if [ -s merged_not_deleted_branches.txt ]; then
+              echo "✅ Branches mergeadas encontradas:"
+              cat merged_not_deleted_branches.txt
+          else
+              echo "⚠️ Nenhuma branch mergeada encontrada ou arquivo está vazio!"
+              exit 1
+          fi
 
           # Depuração antes do upload
           echo "✅ Conteúdo do arquivo:"
