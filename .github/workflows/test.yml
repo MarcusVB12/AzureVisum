@@ -71,7 +71,7 @@ jobs:
           cat merged_branches_list.txt
 
 
-            - name: Debug Merged Branches List
+      - name: Debug Merged Branches List
         run: |
           if [ -s merged_branches_list.txt ]; then
             echo "✅ Arquivo gerado corretamente:"
