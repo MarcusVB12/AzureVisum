@@ -37,8 +37,24 @@ jobs:
       # - name: chamando o js
       #   uses: ./.github/actions/send-message-action
       # 7. UPDATE DEVOPS RESOLUTION
-      - name: 7. UPDATE DEVOPS RESOLUTION (${{ github.head_ref }})
+      # - name: 7. UPDATE DEVOPS RESOLUTION (${{ github.head_ref }})
+      #   run: |
+      #     echo $(node src/action.js)
+      - name: Checkout Repository
+            uses: actions/checkout@v3
+
+      - name: Get Merged Branches
         run: |
-          echo $(node src/action.js)
+          git fetch --all
+          git branch --merged origin/main | while read branch; do
+            echo "$branch - $(git log -1 --pretty=format:'%an' $branch)" >> merged_branches_list.txt
+          done
+          cat merged_branches_list.txt
+
+      - name: Upload Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: merged-branches
+          path: merged_branches_list.txt
 
       
