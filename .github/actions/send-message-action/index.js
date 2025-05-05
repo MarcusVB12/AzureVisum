@@ -83,7 +83,8 @@ function veryBranchs(workItems, branchsNumber){
 
 async function init() {
     //pegar a lista de branchs com status merges de prrod
-
+    const fileName = (args?.fileName)?.toString()
+    console.log('fileName ' + fileName);
     const currentSprintId = (await getSprint())?.value?.[0]?.id
     const workItemsOfCurrentSprint = (await getWorkItemsWithSprint(currentSprintId))?.workItemRelations.map((workItem) => workItem.target.id)
     const workItemsContentOfCurrentSprint = (await getWorkItemsWithIdList(workItemsOfCurrentSprint, ['System.WorkItemType', 'System.State']))?.value

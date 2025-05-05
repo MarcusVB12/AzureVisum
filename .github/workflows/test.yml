@@ -100,5 +100,16 @@ jobs:
           path: merged_not_deleted_branches.txt
 
 
+      - name: 7. UPDATE DEVOPS RESOLUTION (${{ github.head_ref }})
+        # env:
+        #   DEVOPS_ORGANIZATION: ${{ secrets.DEVOPS_ORGANIZATION }}
+        #   DEVOPS_PROJECTS: ${{ secrets.DEVOPS_PROJECTS }}
+        #   DEVOPS_TOKEN_DEFAULT: ${{ secrets.DEVOPS_TOKEN_DEFAULT }}
+        run: |
+          echo $(node ResolutionScript/index.js --fileName='./merged_not_deleted_branches.txt' --format)
+
+      
+
+
 
       
