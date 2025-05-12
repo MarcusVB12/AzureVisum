@@ -41,57 +41,57 @@ jobs:
       # - name: 7. UPDATE DEVOPS RESOLUTION (${{ github.head_ref }})
       #   run: |
       #     echo $(node src/action.js)
-      - name: Get Merged Branches
-        run: |
-          # Garantir que todo o histórico seja baixado
-          git fetch --prune --unshallow || git fetch --prune --depth=10000
-          git fetch --all
+      # - name: Get Merged Branches
+      #   run: |
+      #     # Garantir que todo o histórico seja baixado
+      #     git fetch --prune --unshallow || git fetch --prune --depth=10000
+      #     git fetch --all
 
-          # Criar arquivo para armazenar branches mergeadas
-          touch merged_not_deleted_branches.txt
+      #     # Criar arquivo para armazenar branches mergeadas
+      #     touch merged_not_deleted_branches.txt
 
-          # Verificar branch principal corretamente
-          if git ls-remote --exit-code origin main > /dev/null; then
-              MAIN_BRANCH="main"
-          elif git ls-remote --exit-code origin master > /dev/null; then
-              MAIN_BRANCH="master"
-          else
-              echo "Erro: Nenhuma branch principal encontrada!" && exit 1
-          fi
+      #     # Verificar branch principal corretamente
+      #     if git ls-remote --exit-code origin main > /dev/null; then
+      #         MAIN_BRANCH="main"
+      #     elif git ls-remote --exit-code origin master > /dev/null; then
+      #         MAIN_BRANCH="master"
+      #     else
+      #         echo "Erro: Nenhuma branch principal encontrada!" && exit 1
+      #     fi
 
-          # Checkout correto da branch principal
-          git checkout $MAIN_BRANCH || git checkout -b $MAIN_BRANCH origin/$MAIN_BRANCH
+      #     # Checkout correto da branch principal
+      #     git checkout $MAIN_BRANCH || git checkout -b $MAIN_BRANCH origin/$MAIN_BRANCH
 
-          # Atualizar repositório
-          git pull --all
+      #     # Atualizar repositório
+      #     git pull --all
 
-          # Debug para verificar branches disponíveis
-          echo "🔎 Verificando branches disponíveis..."
-          git branch -r
+      #     # Debug para verificar branches disponíveis
+      #     echo "🔎 Verificando branches disponíveis..."
+      #     git branch -r
 
-          # Debug para verificar histórico de merges
-          echo "🔎 Histórico de merges explícitos..."
-          git log --oneline --merges
+      #     # Debug para verificar histórico de merges
+      #     echo "🔎 Histórico de merges explícitos..."
+      #     git log --oneline --merges
 
-          # Listar todas as branches que foram mergeadas na branch principal
-          git branch -r --merged origin/$MAIN_BRANCH | grep -v origin/$MAIN_BRANCH | sed 's/remotes\/origin\///g' | while read branch; do
-              branch_without_origin=$(echo $branch | sed 's|^origin/||')
-              echo "Verificando branch: $branch_without_origin"
-              if git ls-remote --exit-code origin $branch_without_origin > /dev/null; then
-                  echo "$branch_without_origin - $(git log -1 --pretty=format:'%an' origin/$branch_without_origin)" >> merged_not_deleted_branches.txt
-              else
-                  echo "⚠️ Branch $branch_without_origin não encontrada no remoto."
-              fi
-          done
+      #     # Listar todas as branches que foram mergeadas na branch principal
+      #     git branch -r --merged origin/$MAIN_BRANCH | grep -v origin/$MAIN_BRANCH | sed 's/remotes\/origin\///g' | while read branch; do
+      #         branch_without_origin=$(echo $branch | sed 's|^origin/||')
+      #         echo "Verificando branch: $branch_without_origin"
+      #         if git ls-remote --exit-code origin $branch_without_origin > /dev/null; then
+      #             echo "name:$branch_without_origin,author:$(git log -1 --pretty=format:'%an' origin/$branch_without_origin);" >> merged_not_deleted_branches.txt
+      #         else
+      #             echo "⚠️ Branch $branch_without_origin não encontrada no remoto."
+      #         fi
+      #     done
 
-          # Depuração para verificar se o arquivo foi gerado corretamente
-          if [ -s merged_not_deleted_branches.txt ]; then
-              echo "✅ Branches mergeadas encontradas:"
-              cat merged_not_deleted_branches.txt
-          else
-              echo "⚠️ Nenhuma branch mergeada encontrada ou arquivo está vazio!"
-              exit 1
-          fi
+      #     # Depuração para verificar se o arquivo foi gerado corretamente
+      #     if [ -s merged_not_deleted_branches.txt ]; then
+      #         echo "✅ Branches mergeadas encontradas:"
+      #         cat merged_not_deleted_branches.txt
+      #     else
+      #         echo "⚠️ Nenhuma branch mergeada encontrada ou arquivo está vazio!"
+      #         exit 1
+      #     fi
 
       - name: Upload Merged Branches List
         uses: actions/upload-artifact@v4
@@ -105,8 +105,10 @@ jobs:
         #   DEVOPS_ORGANIZATION: ${{ secrets.DEVOPS_ORGANIZATION }}
         #   DEVOPS_PROJECTS: ${{ secrets.DEVOPS_PROJECTS }}
         #   DEVOPS_TOKEN_DEFAULT: ${{ secrets.DEVOPS_TOKEN_DEFAULT }}
+        env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo $(node ResolutionScript/index.js --fileName='./merged_not_deleted_branches.txt' --format)
+          echo $(node ResolutionScript/index.js)
 
       
 
